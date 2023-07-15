@@ -19,12 +19,10 @@ selectEl.addEventListener('change', handlerChose);
 
 fetchBreeds()
   .then(data => {
-    data.forEach(element => {
-      selectEl.insertAdjacentHTML(
-        'beforeend',
-        `<option value="${element.id}">${element.name}</option>`
-      );
-    });
+    const markupArr = data.map(
+      element => `<option value="${element.id}">${element.name}</option>`
+    );
+    selectEl.innerHTML = markupArr.join('');
     hiddenEl(selectEl);
     hiddenEl(loaderEl);
 
@@ -51,12 +49,13 @@ function handlerChose(evt) {
       .then(data => {
         hiddenEl(catInfoEl);
         const { name, description, temperament } = data[0].breeds[0];
-        catInfoEl.innerHTML = `<img src="${data[0].url}" alt="cat ${name}" width='400'>
-      <div>
-        <h2 class="cat-name">${name}</h2>
-        <p class="cat-description">${description}</p>
-        <p class="cat-temperament">Temperament: <span class="temperament-span">${temperament}</span></p>
-      </div>`;
+        addCatInfoMarkup(
+          catInfoEl,
+          data[0].url,
+          name,
+          description,
+          temperament
+        );
         hiddenEl(loaderEl);
       })
       .catch(
@@ -71,4 +70,13 @@ function handlerChose(evt) {
 
 function hiddenEl(el) {
   return el.classList.toggle('hidden');
+}
+
+function addCatInfoMarkup(catInfo, url, name, description, temperament) {
+  catInfo.innerHTML = `<img src="${url}" alt="cat ${name}" width='400'>
+      <div>
+        <h2 class="cat-name">${name}</h2>
+        <p class="cat-description">${description}</p>
+        <p class="cat-temperament">Temperament: <span class="temperament-span">${temperament}</span></p>
+      </div>`;
 }
